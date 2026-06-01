@@ -10,18 +10,13 @@
 
 #define MAX_SONGS 50
 
-char* ms_to_time_string(int ms) {
-    static char out[32];
+void ms_to_time_string(long ms, char *buf, size_t buf_size)
+{
+    long total_seconds = ms / 1000;
+    long minutes = total_seconds / 60;
+    long seconds = total_seconds % 60;
 
-    int total_seconds = ms / 1000;
-    int hours = total_seconds / 3600;
-    int minutes = (total_seconds % 3600) / 60;
-    int seconds = total_seconds % 60;
-
-    if (hours > 0) snprintf(out, sizeof(out), "%02d:%02d:%02d", hours, minutes, seconds);
-    else snprintf(out, sizeof(out), "%02d:%02d", minutes, seconds);
-
-    return out;
+    snprintf(buf, buf_size, "%02ld:%02ld", minutes, seconds);
 }
 
 int main(int argc, char** argv) {
@@ -130,7 +125,7 @@ int main(int argc, char** argv) {
             else snprintf(line, sizeof(line), "%d. %s\n", t.track_number, t.title);
 
             int len = strlen(line);
-            if (pos + len < sizeof(tracklist))
+            if ((size_t)(pos + len) < sizeof(tracklist))
             {
                 memcpy(tracklist + pos, line, len);
                 pos += len;
@@ -159,12 +154,17 @@ int main(int argc, char** argv) {
         durations[i] = cur_track.duration;
 
         char line[256];
+        char start_buf[32];
+        char dur_buf[32];
+
+        ms_to_time_string(timestamp, start_buf, sizeof(start_buf));
+        ms_to_time_string(cur_track.duration, dur_buf, sizeof(dur_buf));
         snprintf(line, sizeof(line),
-                 "%d. %s (starts @ %s, lasts %s)\n",
-                 cur_track.track_number,
-                 cur_track.title,
-                 ms_to_time_string(timestamp),
-                 ms_to_time_string(cur_track.duration));
+                "%d. %s (starts @ %s, lasts %s)\n",
+                cur_track.track_number,
+                cur_track.title,
+                start_buf,
+                dur_buf);
 
         strncat(caption, line, 8192 - strlen(caption) - 1);
 
@@ -174,10 +174,10 @@ int main(int argc, char** argv) {
         free(cur_track.artist);
         free(cur_track.album);
     }
-
+    
     concat_audio_ffmpeg(music_filenames, music_filenames_len, "audio");
     export_video_with_audio_ffmpeg(frame_names, durations, music_filenames_len, "audio.flac", "video");
-
+    
     printf("\n%s", caption);
 
     return 0;
