@@ -22,7 +22,7 @@ void ms_to_time_string(long ms, char* buf, size_t buf_size)
 int main(int argc, char** argv) {
     if (argc != 3)
     {
-        printf("Usage: ./alvis <music folder> <ttf file>\n");
+        printf("usage: ./alvis <music folder> <ttf file>\n");
         return 1;
     }
 
