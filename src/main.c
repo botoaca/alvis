@@ -10,7 +10,7 @@
 
 #define MAX_SONGS 50
 
-void ms_to_time_string(long ms, char *buf, size_t buf_size)
+void ms_to_time_string(long ms, char* buf, size_t buf_size)
 {
     long total_seconds = ms / 1000;
     long minutes = total_seconds / 60;
