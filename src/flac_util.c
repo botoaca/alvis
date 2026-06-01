@@ -33,7 +33,7 @@ struct Track read_flac_track(const char* filename) {
             }
         }
 
-        // VORBIS COMMENTS
+        // VORBIS COMMENT
         else if (block->type == FLAC__METADATA_TYPE_VORBIS_COMMENT)
         {
             const FLAC__StreamMetadata_VorbisComment *vc = &block->data.vorbis_comment;
