@@ -1,0 +1,1 @@
+gcc src/main.c src/flac_util.c src/ffmpeg_util.c src/canvas.c -Iinclude -lFLAC -Wall -Wextra -o alvis.exe
